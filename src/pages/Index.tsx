@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CameraCapture } from '@/components/CameraCapture';
@@ -13,7 +14,7 @@ const Index = () => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="min-h-screen bg-green-800">
       <AppHeader />
       
       <main className="container mx-auto px-4 py-8">
@@ -205,3 +206,4 @@ const Index = () => {
 };
 
 export default Index;
+

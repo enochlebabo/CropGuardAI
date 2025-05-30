@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CameraCapture } from '@/components/CameraCapture';
@@ -172,17 +171,26 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg border-2 border-green-200">
               <p className="text-green-800 font-semibold mb-4">Contact Information</p>
               <div className="space-y-2">
-                <p className="text-green-600">📧 Email: support@cropguard.ai</p>
-                <p className="text-green-600">📱 Phone: +1 (555) 123-4567</p>
-                <p className="text-green-600">💬 Live Chat: Available 24/7 on our platform</p>
-                <p className="text-green-600">🌐 Website: www.cropguard.ai</p>
+                <p className="text-green-600">📧 Email: seabatalebabo@gmail.com</p>
+                <p className="text-green-600">📱 Phone: +27 73 123 4567</p>
+                <p className="text-green-600">💬 WhatsApp: +27 73 123 4567</p>
+                <p className="text-green-600">🌐 Website: www.cropguard-ai.com</p>
+                <p className="text-green-600">📍 Location: South Africa</p>
               </div>
               <div className="mt-6">
                 <h4 className="font-semibold text-green-800 mb-2">Business Hours</h4>
                 <p className="text-green-700 text-sm">
-                  Monday - Friday: 6:00 AM - 10:00 PM (PST)<br />
-                  Saturday - Sunday: 8:00 AM - 8:00 PM (PST)<br />
+                  Monday - Friday: 8:00 AM - 6:00 PM (SAST)<br />
+                  Saturday - Sunday: 9:00 AM - 5:00 PM (SAST)<br />
                   Emergency support available 24/7
+                </p>
+              </div>
+              <div className="mt-6">
+                <h4 className="font-semibold text-green-800 mb-2">Developer</h4>
+                <p className="text-green-700 text-sm">
+                  Seabata Enoch Lebabo<br />
+                  Agricultural Technology Specialist<br />
+                  AI & Machine Learning Engineer
                 </p>
               </div>
             </div>

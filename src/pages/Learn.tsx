@@ -2,22 +2,27 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Play, Clock, Star, ChevronRight } from 'lucide-react';
+import { BookOpen, Play, Clock, Star, ChevronRight, Settings } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
+import { CourseEditor } from '@/components/CourseEditor';
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  duration: string;
+  lessons: number;
+  rating: number;
+  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  category: string;
+  image: string;
+}
 
 const Learn = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const categories = [
-    { id: 'all', name: 'All Courses', count: 45 },
-    { id: 'basics', name: 'Farming Basics', count: 12 },
-    { id: 'diseases', name: 'Disease Management', count: 15 },
-    { id: 'organic', name: 'Organic Farming', count: 8 },
-    { id: 'technology', name: 'AgTech', count: 10 }
-  ];
-
-  const courses = [
+  const [showEditor, setShowEditor] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([
     {
       id: 1,
       title: 'Introduction to Plant Disease Identification',
@@ -84,11 +89,61 @@ const Learn = () => {
       category: 'basics',
       image: '💧'
     }
+  ]);
+
+  const categories = [
+    { id: 'all', name: 'All Courses', count: courses.length },
+    { id: 'basics', name: 'Farming Basics', count: courses.filter(c => c.category === 'basics').length },
+    { id: 'diseases', name: 'Disease Management', count: courses.filter(c => c.category === 'diseases').length },
+    { id: 'organic', name: 'Organic Farming', count: courses.filter(c => c.category === 'organic').length },
+    { id: 'technology', name: 'AgTech', count: courses.filter(c => c.category === 'technology').length }
   ];
 
   const filteredCourses = selectedCategory === 'all' 
     ? courses 
     : courses.filter(course => course.category === selectedCategory);
+
+  const handleSaveCourse = (course: Course) => {
+    setCourses(prev => {
+      const existingIndex = prev.findIndex(c => c.id === course.id);
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = course;
+        return updated;
+      } else {
+        return [...prev, course];
+      }
+    });
+  };
+
+  const handleDeleteCourse = (id: number) => {
+    setCourses(prev => prev.filter(c => c.id !== id));
+  };
+
+  if (showEditor) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+        <AppHeader />
+        <main className="container mx-auto px-4 py-8">
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowEditor(false)}
+              className="mb-4"
+            >
+              ← Back to Courses
+            </Button>
+            <CourseEditor 
+              courses={courses}
+              onSaveCourse={handleSaveCourse}
+              onDeleteCourse={handleDeleteCourse}
+            />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -96,9 +151,19 @@ const Learn = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-green-800 mb-4">
-            🎓 Learning Center
-          </h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-4xl font-bold text-green-800">
+              🎓 Learning Center
+            </h1>
+            <Button 
+              onClick={() => setShowEditor(true)}
+              variant="outline"
+              className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Manage Courses
+            </Button>
+          </div>
           <p className="text-xl text-green-700 mb-8 max-w-2xl mx-auto">
             Expand your agricultural knowledge with our comprehensive courses designed by farming experts.
           </p>

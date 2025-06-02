@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Star, Users, Shield, Zap } from 'lucide-react';
+import { ChatbotTrigger } from '@/components/ChatbotTrigger';
 
 const Index = () => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -199,6 +200,7 @@ const Index = () => {
       </main>
       
       <Footer />
+      <ChatbotTrigger />
     </div>
   );
 };

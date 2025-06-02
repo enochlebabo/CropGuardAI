@@ -1,11 +1,10 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MessageCircle, Send, Bot, User, Settings, X, Minimize2, Maximize2 } from 'lucide-react';
+import { MessageCircle, Send, Bot, User, Settings, X, Minimize2, Maximize2, Zap, Leaf } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Message {
@@ -25,7 +24,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle }) => {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I\'m your agricultural AI assistant. I can help you with plant diseases, farming techniques, and crop management. What would you like to know?',
+      content: '🌾 Hello! I\'m AgriBot, your intelligent agricultural assistant powered by advanced AI. I can help you with plant diseases, farming techniques, crop management, and much more. What agricultural challenge can I help you solve today?',
       timestamp: new Date()
     }
   ]);
@@ -178,14 +177,24 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <Card className={`w-96 shadow-2xl border-2 border-green-200 transition-all duration-300 ${isMinimized ? 'h-16' : 'h-[32rem]'}`}>
-        <CardHeader className="pb-2 bg-green-50">
+    <div className="fixed bottom-6 right-6 z-50">
+      <Card className={`w-[28rem] shadow-2xl border-4 border-green-200/50 transition-all duration-500 backdrop-blur-sm bg-white/95 ${isMinimized ? 'h-20' : 'h-[40rem]'} animate-scale-in`}>
+        <CardHeader className="pb-3 bg-gradient-to-r from-green-50 via-emerald-50 to-green-100 border-b-2 border-green-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Bot className="h-5 w-5 text-green-600" />
-              <CardTitle className="text-lg text-green-800">AgriBot</CardTitle>
-              <Badge variant="outline" className="text-xs border-green-300 text-green-700">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <Bot className="h-8 w-8 text-green-600 animate-pulse" />
+                <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-400 rounded-full animate-ping"></div>
+              </div>
+              <div>
+                <CardTitle className="text-xl text-green-800 font-bold flex items-center gap-2">
+                  🤖 AgriBot
+                  <Leaf className="h-5 w-5 text-green-600 animate-bounce" />
+                </CardTitle>
+                <p className="text-xs text-green-600 font-medium">AI Agricultural Expert</p>
+              </div>
+              <Badge variant="outline" className="text-xs border-green-400 text-green-700 bg-green-50 font-semibold">
+                <Zap className="h-3 w-3 mr-1" />
                 {selectedAPI === 'chatgpt' ? 'ChatGPT' : 'DeepSeek'}
               </Badge>
             </div>
@@ -194,25 +203,25 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle }) => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowSettings(!showSettings)}
-                className="h-6 w-6 p-0"
+                className="h-8 w-8 p-0 hover:bg-green-100 transition-colors"
               >
-                <Settings className="h-3 w-3" />
+                <Settings className="h-4 w-4 text-green-600" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="h-6 w-6 p-0"
+                className="h-8 w-8 p-0 hover:bg-green-100 transition-colors"
               >
-                {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
+                {isMinimized ? <Maximize2 className="h-4 w-4 text-green-600" /> : <Minimize2 className="h-4 w-4 text-green-600" />}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onToggle}
-                className="h-6 w-6 p-0"
+                className="h-8 w-8 p-0 hover:bg-red-100 transition-colors"
               >
-                <X className="h-3 w-3" />
+                <X className="h-4 w-4 text-red-600" />
               </Button>
             </div>
           </div>
@@ -221,63 +230,84 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle }) => {
         {!isMinimized && (
           <CardContent className="p-0 flex flex-col h-full">
             {showSettings && (
-              <div className="p-4 border-b bg-gray-50">
-                <div className="space-y-3">
+              <div className="p-6 border-b bg-gradient-to-r from-gray-50 to-green-50">
+                <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">AI Provider</label>
+                    <label className="text-sm font-semibold text-gray-700 mb-2 block flex items-center gap-2">
+                      <Zap className="h-4 w-4" />
+                      AI Provider
+                    </label>
                     <Select value={selectedAPI} onValueChange={(value: 'chatgpt' | 'deepseek') => setSelectedAPI(value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-2 border-green-200 focus:border-green-400">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="chatgpt">ChatGPT (OpenAI)</SelectItem>
-                        <SelectItem value="deepseek">DeepSeek</SelectItem>
+                        <SelectItem value="chatgpt">🧠 ChatGPT (OpenAI)</SelectItem>
+                        <SelectItem value="deepseek">🔍 DeepSeek</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">API Key</label>
+                    <label className="text-sm font-semibold text-gray-700 mb-2 block">🔑 API Key</label>
                     <Input
                       type="password"
                       placeholder={`Enter your ${selectedAPI === 'chatgpt' ? 'OpenAI' : 'DeepSeek'} API key`}
                       value={apiKey}
                       onChange={(e) => setApiKey(e.target.value)}
+                      className="border-2 border-green-200 focus:border-green-400"
                     />
                   </div>
-                  <Button onClick={saveApiKey} size="sm" className="w-full bg-green-600 hover:bg-green-700">
-                    Save API Key
+                  <Button onClick={saveApiKey} size="sm" className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold">
+                    💾 Save API Key
                   </Button>
                 </div>
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-80">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 max-h-96 bg-gradient-to-b from-white to-green-50/30">
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-lg ${
+                    className={`max-w-[85%] p-4 rounded-2xl shadow-lg ${
                       message.role === 'user'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 text-gray-800'
+                        ? 'bg-gradient-to-br from-green-600 to-emerald-700 text-white'
+                        : 'bg-white border-2 border-green-100 text-gray-800'
                     }`}
                   >
-                    <div className="flex items-start space-x-2">
-                      {message.role === 'assistant' && <Bot className="h-4 w-4 mt-0.5" />}
-                      {message.role === 'user' && <User className="h-4 w-4 mt-0.5" />}
-                      <div className="text-sm">{message.content}</div>
+                    <div className="flex items-start space-x-3">
+                      {message.role === 'assistant' && (
+                        <div className="bg-green-100 p-2 rounded-full">
+                          <Bot className="h-4 w-4 text-green-600" />
+                        </div>
+                      )}
+                      {message.role === 'user' && (
+                        <div className="bg-white/20 p-2 rounded-full">
+                          <User className="h-4 w-4 text-white" />
+                        </div>
+                      )}
+                      <div className="text-sm leading-relaxed flex-1">{message.content}</div>
                     </div>
                   </div>
                 </div>
               ))}
               {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <Bot className="h-4 w-4" />
-                      <div className="text-sm text-gray-600">Thinking...</div>
+                <div className="flex justify-start animate-pulse">
+                  <div className="bg-white border-2 border-green-100 p-4 rounded-2xl shadow-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-green-100 p-2 rounded-full">
+                        <Bot className="h-4 w-4 text-green-600 animate-spin" />
+                      </div>
+                      <div className="text-sm text-gray-600 flex items-center gap-2">
+                        🧠 AgriBot is thinking...
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -285,23 +315,23 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onToggle }) => {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-4 border-t bg-white">
-              <div className="flex space-x-2">
+            <div className="p-6 border-t-2 border-green-100 bg-gradient-to-r from-white to-green-50">
+              <div className="flex space-x-3">
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about plants, diseases, farming..."
+                  placeholder="🌱 Ask about plants, diseases, farming techniques..."
                   disabled={isLoading}
-                  className="flex-1"
+                  className="flex-1 border-2 border-green-200 focus:border-green-400 rounded-xl text-base"
                 />
                 <Button
                   onClick={sendMessage}
                   disabled={isLoading || !inputMessage.trim()}
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 px-6 rounded-xl transform transition-all duration-200 hover:scale-105 shadow-lg"
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-5 w-5" />
                 </Button>
               </div>
             </div>

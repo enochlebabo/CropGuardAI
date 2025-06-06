@@ -36,6 +36,10 @@ type Analytic = {
   trend: string;
 };
 
+type NewUser = Partial<User>;
+type NewCourse = Partial<Course>;
+type NewAnalytic = Partial<Analytic>;
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -57,9 +61,13 @@ const AdminDashboard = () => {
     { id: 3, metric: 'Disease Detections', value: 89, period: 'This Month', trend: '+15%' },
   ]);
 
-  const [editingItem, setEditingItem] = useState<User | Course | Analytic | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [editingAnalytic, setEditingAnalytic] = useState<Analytic | null>(null);
   const [editingType, setEditingType] = useState<'user' | 'course' | 'analytic' | ''>('');
-  const [newItem, setNewItem] = useState<Partial<User & Course & Analytic>>({});
+  const [newUser, setNewUser] = useState<NewUser>({});
+  const [newCourse, setNewCourse] = useState<NewCourse>({});
+  const [newAnalytic, setNewAnalytic] = useState<NewAnalytic>({});
   const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
@@ -94,79 +102,73 @@ const AdminDashboard = () => {
   };
 
   const handleEdit = (item: User | Course | Analytic, type: 'user' | 'course' | 'analytic') => {
-    setEditingItem({ ...item });
     setEditingType(type);
+    if (type === 'user') {
+      setEditingUser({ ...item as User });
+    } else if (type === 'course') {
+      setEditingCourse({ ...item as Course });
+    } else if (type === 'analytic') {
+      setEditingAnalytic({ ...item as Analytic });
+    }
   };
 
   const handleSave = () => {
-    if (editingItem && editingType) {
-      switch (editingType) {
-        case 'user':
-          setUsers(users.map(user => 
-            user.id === editingItem.id ? editingItem as User : user
-          ));
-          break;
-        case 'course':
-          setCourses(courses.map(course => 
-            course.id === editingItem.id ? editingItem as Course : course
-          ));
-          break;
-        case 'analytic':
-          setAnalytics(analytics.map(analytic => 
-            analytic.id === editingItem.id ? editingItem as Analytic : analytic
-          ));
-          break;
-      }
-      setEditingItem(null);
-      setEditingType('');
-      toast.success(`${editingType.charAt(0).toUpperCase() + editingType.slice(1)} updated successfully`);
+    if (editingType === 'user' && editingUser) {
+      setUsers(users.map(user => 
+        user.id === editingUser.id ? editingUser : user
+      ));
+      setEditingUser(null);
+    } else if (editingType === 'course' && editingCourse) {
+      setCourses(courses.map(course => 
+        course.id === editingCourse.id ? editingCourse : course
+      ));
+      setEditingCourse(null);
+    } else if (editingType === 'analytic' && editingAnalytic) {
+      setAnalytics(analytics.map(analytic => 
+        analytic.id === editingAnalytic.id ? editingAnalytic : analytic
+      ));
+      setEditingAnalytic(null);
     }
+    setEditingType('');
+    toast.success(`${editingType.charAt(0).toUpperCase() + editingType.slice(1)} updated successfully`);
   };
 
   const handleAdd = () => {
     const id = Date.now(); // Simple ID generation
     
-    switch (editingType) {
-      case 'user':
-        if (newItem.name && newItem.email && newItem.farmSize && newItem.location) {
-          const newUser: User = {
-            id,
-            name: newItem.name,
-            email: newItem.email,
-            farmSize: newItem.farmSize,
-            location: newItem.location,
-            status: 'active'
-          };
-          setUsers([...users, newUser]);
-        }
-        break;
-      case 'course':
-        if (newItem.title && newItem.description && newItem.duration && newItem.difficulty) {
-          const newCourse: Course = {
-            id,
-            title: newItem.title,
-            description: newItem.description,
-            duration: newItem.duration,
-            difficulty: newItem.difficulty
-          };
-          setCourses([...courses, newCourse]);
-        }
-        break;
-      case 'analytic':
-        if (newItem.metric && newItem.value !== undefined && newItem.period && newItem.trend) {
-          const newAnalytic: Analytic = {
-            id,
-            metric: newItem.metric,
-            value: newItem.value,
-            period: newItem.period,
-            trend: newItem.trend
-          };
-          setAnalytics([...analytics, newAnalytic]);
-        }
-        break;
+    if (editingType === 'user' && newUser.name && newUser.email && newUser.farmSize && newUser.location) {
+      const newUserComplete: User = {
+        id,
+        name: newUser.name,
+        email: newUser.email,
+        farmSize: newUser.farmSize,
+        location: newUser.location,
+        status: 'active'
+      };
+      setUsers([...users, newUserComplete]);
+      setNewUser({});
+    } else if (editingType === 'course' && newCourse.title && newCourse.description && newCourse.duration && newCourse.difficulty) {
+      const newCourseComplete: Course = {
+        id,
+        title: newCourse.title,
+        description: newCourse.description,
+        duration: newCourse.duration,
+        difficulty: newCourse.difficulty
+      };
+      setCourses([...courses, newCourseComplete]);
+      setNewCourse({});
+    } else if (editingType === 'analytic' && newAnalytic.metric && newAnalytic.value !== undefined && newAnalytic.period && newAnalytic.trend) {
+      const newAnalyticComplete: Analytic = {
+        id,
+        metric: newAnalytic.metric,
+        value: newAnalytic.value,
+        period: newAnalytic.period,
+        trend: newAnalytic.trend
+      };
+      setAnalytics([...analytics, newAnalyticComplete]);
+      setNewAnalytic({});
     }
     
-    setNewItem({});
     setShowAddForm(false);
     setEditingType('');
     toast.success(`${editingType.charAt(0).toUpperCase() + editingType.slice(1)} added successfully`);
@@ -180,13 +182,19 @@ const AdminDashboard = () => {
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  const renderUserForm = (item: Partial<User> | null, isNew = false) => (
+  const renderUserForm = (item: User | NewUser | null, isNew = false) => (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
         <Label>Name</Label>
         <Input
           value={item?.name || ''}
-          onChange={(e) => isNew ? setNewItem({...newItem, name: e.target.value}) : setEditingItem({...editingItem as User, name: e.target.value})}
+          onChange={(e) => {
+            if (isNew) {
+              setNewUser({...newUser, name: e.target.value});
+            } else if (editingUser) {
+              setEditingUser({...editingUser, name: e.target.value});
+            }
+          }}
           placeholder="Full name"
         />
       </div>
@@ -194,7 +202,13 @@ const AdminDashboard = () => {
         <Label>Email</Label>
         <Input
           value={item?.email || ''}
-          onChange={(e) => isNew ? setNewItem({...newItem, email: e.target.value}) : setEditingItem({...editingItem as User, email: e.target.value})}
+          onChange={(e) => {
+            if (isNew) {
+              setNewUser({...newUser, email: e.target.value});
+            } else if (editingUser) {
+              setEditingUser({...editingUser, email: e.target.value});
+            }
+          }}
           placeholder="Email address"
         />
       </div>
@@ -202,7 +216,13 @@ const AdminDashboard = () => {
         <Label>Farm Size</Label>
         <Input
           value={item?.farmSize || ''}
-          onChange={(e) => isNew ? setNewItem({...newItem, farmSize: e.target.value}) : setEditingItem({...editingItem as User, farmSize: e.target.value})}
+          onChange={(e) => {
+            if (isNew) {
+              setNewUser({...newUser, farmSize: e.target.value});
+            } else if (editingUser) {
+              setEditingUser({...editingUser, farmSize: e.target.value});
+            }
+          }}
           placeholder="Farm size"
         />
       </div>
@@ -210,7 +230,13 @@ const AdminDashboard = () => {
         <Label>Location</Label>
         <Input
           value={item?.location || ''}
-          onChange={(e) => isNew ? setNewItem({...newItem, location: e.target.value}) : setEditingItem({...editingItem as User, location: e.target.value})}
+          onChange={(e) => {
+            if (isNew) {
+              setNewUser({...newUser, location: e.target.value});
+            } else if (editingUser) {
+              setEditingUser({...editingUser, location: e.target.value});
+            }
+          }}
           placeholder="Location"
         />
       </div>
@@ -219,7 +245,11 @@ const AdminDashboard = () => {
           <Label>Status</Label>
           <Select
             value={item?.status || 'active'}
-            onValueChange={(value) => setEditingItem({...editingItem as User, status: value})}
+            onValueChange={(value) => {
+              if (editingUser) {
+                setEditingUser({...editingUser, status: value});
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue />
@@ -235,13 +265,19 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const renderCourseForm = (item: Partial<Course> | null, isNew = false) => (
+  const renderCourseForm = (item: Course | NewCourse | null, isNew = false) => (
     <div className="space-y-4">
       <div className="space-y-2">
         <Label>Title</Label>
         <Input
           value={item?.title || ''}
-          onChange={(e) => isNew ? setNewItem({...newItem, title: e.target.value}) : setEditingItem({...editingItem as Course, title: e.target.value})}
+          onChange={(e) => {
+            if (isNew) {
+              setNewCourse({...newCourse, title: e.target.value});
+            } else if (editingCourse) {
+              setEditingCourse({...editingCourse, title: e.target.value});
+            }
+          }}
           placeholder="Course title"
         />
       </div>
@@ -249,7 +285,13 @@ const AdminDashboard = () => {
         <Label>Description</Label>
         <Textarea
           value={item?.description || ''}
-          onChange={(e) => isNew ? setNewItem({...newItem, description: e.target.value}) : setEditingItem({...editingItem as Course, description: e.target.value})}
+          onChange={(e) => {
+            if (isNew) {
+              setNewCourse({...newCourse, description: e.target.value});
+            } else if (editingCourse) {
+              setEditingCourse({...editingCourse, description: e.target.value});
+            }
+          }}
           placeholder="Course description"
         />
       </div>
@@ -258,7 +300,13 @@ const AdminDashboard = () => {
           <Label>Duration</Label>
           <Input
             value={item?.duration || ''}
-            onChange={(e) => isNew ? setNewItem({...newItem, duration: e.target.value}) : setEditingItem({...editingItem as Course, duration: e.target.value})}
+            onChange={(e) => {
+              if (isNew) {
+                setNewCourse({...newCourse, duration: e.target.value});
+              } else if (editingCourse) {
+                setEditingCourse({...editingCourse, duration: e.target.value});
+              }
+            }}
             placeholder="e.g., 2 hours"
           />
         </div>
@@ -266,7 +314,13 @@ const AdminDashboard = () => {
           <Label>Difficulty</Label>
           <Select
             value={item?.difficulty || 'Beginner'}
-            onValueChange={(value) => isNew ? setNewItem({...newItem, difficulty: value}) : setEditingItem({...editingItem as Course, difficulty: value})}
+            onValueChange={(value) => {
+              if (isNew) {
+                setNewCourse({...newCourse, difficulty: value});
+              } else if (editingCourse) {
+                setEditingCourse({...editingCourse, difficulty: value});
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue />
@@ -378,7 +432,7 @@ const AdminDashboard = () => {
                   onClick={() => {
                     setShowAddForm(true);
                     setEditingType('user');
-                    setNewItem({});
+                    setNewUser({});
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -455,7 +509,7 @@ const AdminDashboard = () => {
                   onClick={() => {
                     setShowAddForm(true);
                     setEditingType('course');
-                    setNewItem({});
+                    setNewCourse({});
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -522,7 +576,7 @@ const AdminDashboard = () => {
                   onClick={() => {
                     setShowAddForm(true);
                     setEditingType('analytic');
-                    setNewItem({});
+                    setNewAnalytic({});
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -617,44 +671,44 @@ const AdminDashboard = () => {
       </div>
 
       {/* Edit Modal */}
-      {editingItem && (
+      {(editingUser || editingCourse || editingAnalytic) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <CardHeader>
               <CardTitle>Edit {editingType.charAt(0).toUpperCase() + editingType.slice(1)}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {editingType === 'user' && renderUserForm(editingItem as User)}
-              {editingType === 'course' && renderCourseForm(editingItem as Course)}
-              {editingType === 'analytic' && (
+              {editingType === 'user' && renderUserForm(editingUser)}
+              {editingType === 'course' && renderCourseForm(editingCourse)}
+              {editingType === 'analytic' && editingAnalytic && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Metric Name</Label>
                     <Input
-                      value={(editingItem as Analytic).metric || ''}
-                      onChange={(e) => setEditingItem({...editingItem as Analytic, metric: e.target.value})}
+                      value={editingAnalytic.metric || ''}
+                      onChange={(e) => setEditingAnalytic({...editingAnalytic, metric: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Value</Label>
                     <Input
                       type="number"
-                      value={(editingItem as Analytic).value || ''}
-                      onChange={(e) => setEditingItem({...editingItem as Analytic, value: parseInt(e.target.value)})}
+                      value={editingAnalytic.value || ''}
+                      onChange={(e) => setEditingAnalytic({...editingAnalytic, value: parseInt(e.target.value)})}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Period</Label>
                     <Input
-                      value={(editingItem as Analytic).period || ''}
-                      onChange={(e) => setEditingItem({...editingItem as Analytic, period: e.target.value})}
+                      value={editingAnalytic.period || ''}
+                      onChange={(e) => setEditingAnalytic({...editingAnalytic, period: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Trend</Label>
                     <Input
-                      value={(editingItem as Analytic).trend || ''}
-                      onChange={(e) => setEditingItem({...editingItem as Analytic, trend: e.target.value})}
+                      value={editingAnalytic.trend || ''}
+                      onChange={(e) => setEditingAnalytic({...editingAnalytic, trend: e.target.value})}
                     />
                   </div>
                 </div>
@@ -663,7 +717,12 @@ const AdminDashboard = () => {
                 <Button onClick={handleSave} className="bg-red-600 hover:bg-red-700">
                   Save Changes
                 </Button>
-                <Button variant="outline" onClick={() => setEditingItem(null)}>
+                <Button variant="outline" onClick={() => {
+                  setEditingUser(null);
+                  setEditingCourse(null);
+                  setEditingAnalytic(null);
+                  setEditingType('');
+                }}>
                   Cancel
                 </Button>
               </div>
@@ -680,15 +739,15 @@ const AdminDashboard = () => {
               <CardTitle>Add New {editingType.charAt(0).toUpperCase() + editingType.slice(1)}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {editingType === 'user' && renderUserForm(newItem, true)}
-              {editingType === 'course' && renderCourseForm(newItem, true)}
+              {editingType === 'user' && renderUserForm(newUser, true)}
+              {editingType === 'course' && renderCourseForm(newCourse, true)}
               {editingType === 'analytic' && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Metric Name</Label>
                     <Input
-                      value={newItem.metric || ''}
-                      onChange={(e) => setNewItem({...newItem, metric: e.target.value})}
+                      value={newAnalytic.metric || ''}
+                      onChange={(e) => setNewAnalytic({...newAnalytic, metric: e.target.value})}
                       placeholder="Metric name"
                     />
                   </div>
@@ -696,24 +755,24 @@ const AdminDashboard = () => {
                     <Label>Value</Label>
                     <Input
                       type="number"
-                      value={newItem.value || ''}
-                      onChange={(e) => setNewItem({...newItem, value: parseInt(e.target.value)})}
+                      value={newAnalytic.value || ''}
+                      onChange={(e) => setNewAnalytic({...newAnalytic, value: parseInt(e.target.value)})}
                       placeholder="Value"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Period</Label>
                     <Input
-                      value={newItem.period || ''}
-                      onChange={(e) => setNewItem({...newItem, period: e.target.value})}
+                      value={newAnalytic.period || ''}
+                      onChange={(e) => setNewAnalytic({...newAnalytic, period: e.target.value})}
                       placeholder="e.g., This Month"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Trend</Label>
                     <Input
-                      value={newItem.trend || ''}
-                      onChange={(e) => setNewItem({...newItem, trend: e.target.value})}
+                      value={newAnalytic.trend || ''}
+                      onChange={(e) => setNewAnalytic({...newAnalytic, trend: e.target.value})}
                       placeholder="e.g., +12%"
                     />
                   </div>
@@ -725,7 +784,9 @@ const AdminDashboard = () => {
                 </Button>
                 <Button variant="outline" onClick={() => {
                   setShowAddForm(false);
-                  setNewItem({});
+                  setNewUser({});
+                  setNewCourse({});
+                  setNewAnalytic({});
                   setEditingType('');
                 }}>
                   Cancel

@@ -113,6 +113,31 @@ const AdminDashboard = () => {
     setNewAnalytic({});
   };
 
+  // Wrapper functions to handle type compatibility
+  const handleUserChange = (user: User | NewUser) => {
+    if (editingUser && 'id' in user) {
+      setEditingUser(user as User);
+    } else {
+      setNewUser(user as NewUser);
+    }
+  };
+
+  const handleCourseChange = (course: Course | NewCourse) => {
+    if (editingCourse && 'id' in course) {
+      setEditingCourse(course as Course);
+    } else {
+      setNewCourse(course as NewCourse);
+    }
+  };
+
+  const handleAnalyticChange = (analytic: Analytic | NewAnalytic) => {
+    if (editingAnalytic && 'id' in analytic) {
+      setEditingAnalytic(analytic as Analytic);
+    } else {
+      setNewAnalytic(analytic as NewAnalytic);
+    }
+  };
+
   const handleSave = () => {
     if (editingType === 'user' && editingUser) {
       setUsers(users.map(user => user.id === editingUser.id ? editingUser : user));
@@ -271,13 +296,13 @@ const AdminDashboard = () => {
         onCancel={handleCancel}
       >
         {editingType === 'user' && (
-          <UserForm user={editingUser} onUserChange={setEditingUser} />
+          <UserForm user={editingUser} onUserChange={handleUserChange} />
         )}
         {editingType === 'course' && (
-          <CourseForm course={editingCourse} onCourseChange={setEditingCourse} />
+          <CourseForm course={editingCourse} onCourseChange={handleCourseChange} />
         )}
         {editingType === 'analytic' && (
-          <AnalyticsForm analytic={editingAnalytic} onAnalyticChange={setEditingAnalytic} />
+          <AnalyticsForm analytic={editingAnalytic} onAnalyticChange={handleAnalyticChange} />
         )}
       </AdminModal>
 
@@ -289,13 +314,13 @@ const AdminDashboard = () => {
         onCancel={handleCancel}
       >
         {editingType === 'user' && (
-          <UserForm user={newUser} isNew onUserChange={setNewUser} />
+          <UserForm user={newUser} isNew onUserChange={handleUserChange} />
         )}
         {editingType === 'course' && (
-          <CourseForm course={newCourse} isNew onCourseChange={setNewCourse} />
+          <CourseForm course={newCourse} isNew onCourseChange={handleCourseChange} />
         )}
         {editingType === 'analytic' && (
-          <AnalyticsForm analytic={newAnalytic} isNew onAnalyticChange={setNewAnalytic} />
+          <AnalyticsForm analytic={newAnalytic} isNew onAnalyticChange={handleAnalyticChange} />
         )}
       </AdminModal>
     </div>

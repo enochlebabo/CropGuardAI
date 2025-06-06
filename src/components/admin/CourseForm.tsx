@@ -35,6 +35,14 @@ export const CourseForm: React.FC<CourseFormProps> = ({ course, isNew = false, o
           placeholder="Course description"
         />
       </div>
+      <div className="space-y-2">
+        <Label>YouTube Playlist URL</Label>
+        <Input
+          value={course?.youtubePlaylistUrl || ''}
+          onChange={(e) => handleChange('youtubePlaylistUrl', e.target.value)}
+          placeholder="https://www.youtube.com/playlist?list=..."
+        />
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Duration</Label>

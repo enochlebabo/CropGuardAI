@@ -14,6 +14,7 @@ export type Course = {
   description: string;
   duration: string;
   difficulty: string;
+  youtubePlaylistUrl?: string;
 };
 
 export type Analytic = {

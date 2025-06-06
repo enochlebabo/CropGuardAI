@@ -161,6 +161,16 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({ courses, onSaveCours
               />
             </div>
 
+            <div>
+              <Label htmlFor="youtubeUrl">YouTube Playlist URL</Label>
+              <Input
+                id="youtubeUrl"
+                value={formData.youtubePlaylistUrl || ''}
+                onChange={(e) => handleInputChange('youtubePlaylistUrl', e.target.value)}
+                placeholder="https://www.youtube.com/playlist?list=..."
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <Label htmlFor="duration">Duration</Label>

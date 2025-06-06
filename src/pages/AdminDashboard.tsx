@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -25,9 +24,30 @@ const AdminDashboard = () => {
   ]);
 
   const [courses, setCourses] = useState<Course[]>([
-    { id: 1, title: 'Plant Disease Identification', description: 'Learn to identify common plant diseases', duration: '2 hours', difficulty: 'Beginner' },
-    { id: 2, title: 'Sustainable Farming Practices', description: 'Advanced techniques for sustainable agriculture', duration: '4 hours', difficulty: 'Advanced' },
-    { id: 3, title: 'Crop Rotation Strategies', description: 'Maximize yield with proper crop rotation', duration: '3 hours', difficulty: 'Intermediate' },
+    { 
+      id: 1, 
+      title: 'Plant Disease Identification', 
+      description: 'Learn to identify common plant diseases', 
+      duration: '2 hours', 
+      difficulty: 'Beginner',
+      youtubePlaylistUrl: 'https://www.youtube.com/playlist?list=PLrAXtmRdnEQy8gn6dxKy4K8K8K8K8K8K8'
+    },
+    { 
+      id: 2, 
+      title: 'Sustainable Farming Practices', 
+      description: 'Advanced techniques for sustainable agriculture', 
+      duration: '4 hours', 
+      difficulty: 'Advanced',
+      youtubePlaylistUrl: 'https://www.youtube.com/playlist?list=PLrAXtmRdnEQy9gn7dxKy5K9K9K9K9K9K9'
+    },
+    { 
+      id: 3, 
+      title: 'Crop Rotation Strategies', 
+      description: 'Maximize yield with proper crop rotation', 
+      duration: '3 hours', 
+      difficulty: 'Intermediate',
+      youtubePlaylistUrl: 'https://www.youtube.com/playlist?list=PLrAXtmRdnEQy0gn8dxKy6K0K0K0K0K0K0'
+    },
   ]);
 
   const [analytics, setAnalytics] = useState<Analytic[]>([
@@ -173,7 +193,8 @@ const AdminDashboard = () => {
         title: newCourse.title,
         description: newCourse.description,
         duration: newCourse.duration,
-        difficulty: newCourse.difficulty
+        difficulty: newCourse.difficulty,
+        youtubePlaylistUrl: newCourse.youtubePlaylistUrl
       };
       setCourses([...courses, newCourseComplete]);
       setNewCourse({});

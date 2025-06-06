@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ interface Course {
   level: 'Beginner' | 'Intermediate' | 'Advanced';
   category: string;
   image: string;
+  youtubePlaylistUrl?: string; // New property for YouTube playlist URL
 }
 
 const Learn = () => {
@@ -120,6 +120,17 @@ const Learn = () => {
     setCourses(prev => prev.filter(c => c.id !== id));
   };
 
+  const handleStartCourse = (course: Course) => {
+    // Check if course has a YouTube playlist URL
+    if (course.youtubePlaylistUrl) {
+      window.open(course.youtubePlaylistUrl, '_blank');
+    } else {
+      // Fallback to a generic action or show a message
+      console.log(`Starting course: ${course.title}`);
+      // You could also show a toast message here
+    }
+  };
+
   if (showEditor) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -215,7 +226,10 @@ const Learn = () => {
                       {course.level}
                     </span>
                   </div>
-                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                  <Button 
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    onClick={() => handleStartCourse(course)}
+                  >
                     <Play className="h-4 w-4 mr-2" />
                     Start Course
                     <ChevronRight className="h-4 w-4 ml-2" />

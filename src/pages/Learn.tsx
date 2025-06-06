@@ -1,10 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Play, Clock, Star, ChevronRight, Settings } from 'lucide-react';
+import { BookOpen, Play, Clock, Star, ChevronRight, CheckCircle } from 'lucide-react';
 import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
-import { CourseEditor } from '@/components/CourseEditor';
 
 interface Course {
   id: number;
@@ -16,12 +16,13 @@ interface Course {
   level: 'Beginner' | 'Intermediate' | 'Advanced';
   category: string;
   image: string;
-  youtubePlaylistUrl?: string; // New property for YouTube playlist URL
+  youtubePlaylistUrl?: string;
+  progress?: number; // New property for user progress
+  completed?: boolean; // New property for completion status
 }
 
 const Learn = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showEditor, setShowEditor] = useState(false);
   const [courses, setCourses] = useState<Course[]>([
     {
       id: 1,
@@ -32,7 +33,10 @@ const Learn = () => {
       rating: 4.9,
       level: 'Beginner',
       category: 'diseases',
-      image: '🔬'
+      image: '🔬',
+      youtubePlaylistUrl: 'https://www.youtube.com/playlist?list=PLrAXtmRdnEQy8gn6dxKy4K8K8K8K8K8K8',
+      progress: 75,
+      completed: false
     },
     {
       id: 2,
@@ -43,7 +47,10 @@ const Learn = () => {
       rating: 4.8,
       level: 'Intermediate',
       category: 'organic',
-      image: '🌱'
+      image: '🌱',
+      youtubePlaylistUrl: 'https://www.youtube.com/playlist?list=PLrAXtmRdnEQy9gn7dxKy5K9K9K9K9K9K9',
+      progress: 100,
+      completed: true
     },
     {
       id: 3,
@@ -54,7 +61,10 @@ const Learn = () => {
       rating: 4.7,
       level: 'Advanced',
       category: 'technology',
-      image: '🤖'
+      image: '🤖',
+      youtubePlaylistUrl: 'https://www.youtube.com/playlist?list=PLrAXtmRdnEQy0gn8dxKy6K0K0K0K0K0K0',
+      progress: 25,
+      completed: false
     },
     {
       id: 4,
@@ -65,7 +75,9 @@ const Learn = () => {
       rating: 4.9,
       level: 'Beginner',
       category: 'basics',
-      image: '🌍'
+      image: '🌍',
+      progress: 0,
+      completed: false
     },
     {
       id: 5,
@@ -76,7 +88,9 @@ const Learn = () => {
       rating: 4.8,
       level: 'Intermediate',
       category: 'diseases',
-      image: '🐛'
+      image: '🐛',
+      progress: 50,
+      completed: false
     },
     {
       id: 6,
@@ -87,7 +101,9 @@ const Learn = () => {
       rating: 4.6,
       level: 'Beginner',
       category: 'basics',
-      image: '💧'
+      image: '💧',
+      progress: 0,
+      completed: false
     }
   ]);
 
@@ -103,23 +119,6 @@ const Learn = () => {
     ? courses 
     : courses.filter(course => course.category === selectedCategory);
 
-  const handleSaveCourse = (course: Course) => {
-    setCourses(prev => {
-      const existingIndex = prev.findIndex(c => c.id === course.id);
-      if (existingIndex >= 0) {
-        const updated = [...prev];
-        updated[existingIndex] = course;
-        return updated;
-      } else {
-        return [...prev, course];
-      }
-    });
-  };
-
-  const handleDeleteCourse = (id: number) => {
-    setCourses(prev => prev.filter(c => c.id !== id));
-  };
-
   const handleStartCourse = (course: Course) => {
     // Check if course has a YouTube playlist URL
     if (course.youtubePlaylistUrl) {
@@ -131,50 +130,15 @@ const Learn = () => {
     }
   };
 
-  if (showEditor) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-        <AppHeader />
-        <main className="container mx-auto px-4 py-8">
-          <div className="mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowEditor(false)}
-              className="mb-4"
-            >
-              ← Back to Courses
-            </Button>
-            <CourseEditor 
-              courses={courses}
-              onSaveCourse={handleSaveCourse}
-              onDeleteCourse={handleDeleteCourse}
-            />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <AppHeader />
       
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-4xl font-bold text-green-800">
-              🎓 Learning Center
-            </h1>
-            <Button 
-              onClick={() => setShowEditor(true)}
-              variant="outline"
-              className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Manage Courses
-            </Button>
-          </div>
+          <h1 className="text-4xl font-bold text-green-800 mb-4">
+            🎓 Learning Center
+          </h1>
           <p className="text-xl text-green-700 mb-8 max-w-2xl mx-auto">
             Expand your agricultural knowledge with our comprehensive courses designed by farming experts.
           </p>
@@ -197,7 +161,12 @@ const Learn = () => {
           {filteredCourses.map((course) => (
             <Card key={course.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="text-4xl mb-2">{course.image}</div>
+                <div className="flex justify-between items-start mb-2">
+                  <div className="text-4xl">{course.image}</div>
+                  {course.completed && (
+                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  )}
+                </div>
                 <CardTitle className="text-lg">{course.title}</CardTitle>
                 <CardDescription>{course.description}</CardDescription>
               </CardHeader>
@@ -213,6 +182,21 @@ const Learn = () => {
                       {course.lessons} lessons
                     </span>
                   </div>
+                  
+                  {/* Progress bar */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>Progress</span>
+                      <span>{course.progress || 0}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${course.progress || 0}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Star className="h-4 w-4 text-yellow-400 mr-1" />
@@ -231,7 +215,7 @@ const Learn = () => {
                     onClick={() => handleStartCourse(course)}
                   >
                     <Play className="h-4 w-4 mr-2" />
-                    Start Course
+                    {course.progress > 0 ? 'Continue Course' : 'Start Course'}
                     <ChevronRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>

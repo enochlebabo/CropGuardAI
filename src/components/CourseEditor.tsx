@@ -18,6 +18,7 @@ interface Course {
   level: 'Beginner' | 'Intermediate' | 'Advanced';
   category: string;
   image: string;
+  youtubePlaylistUrl?: string;
 }
 
 interface CourseEditorProps {
@@ -37,7 +38,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({ courses, onSaveCours
     rating: 4.5,
     level: 'Beginner',
     category: 'basics',
-    image: '📚'
+    image: '📚',
+    youtubePlaylistUrl: ''
   });
 
   const handleInputChange = (field: keyof Course, value: any) => {
@@ -55,7 +57,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({ courses, onSaveCours
         rating: formData.rating || 4.5,
         level: formData.level || 'Beginner',
         category: formData.category || 'basics',
-        image: formData.image || '📚'
+        image: formData.image || '📚',
+        youtubePlaylistUrl: formData.youtubePlaylistUrl || ''
       };
       
       onSaveCourse(courseToSave);
@@ -69,7 +72,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({ courses, onSaveCours
         rating: 4.5,
         level: 'Beginner',
         category: 'basics',
-        image: '📚'
+        image: '📚',
+        youtubePlaylistUrl: ''
       });
     }
   };
@@ -91,7 +95,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({ courses, onSaveCours
       rating: 4.5,
       level: 'Beginner',
       category: 'basics',
-      image: '📚'
+      image: '📚',
+      youtubePlaylistUrl: ''
     });
   };
 
@@ -106,7 +111,8 @@ export const CourseEditor: React.FC<CourseEditorProps> = ({ courses, onSaveCours
       rating: 4.5,
       level: 'Beginner',
       category: 'basics',
-      image: '📚'
+      image: '📚',
+      youtubePlaylistUrl: ''
     });
   };
 

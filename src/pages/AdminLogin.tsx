@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Leaf, Eye, EyeOff, Shield } from 'lucide-react';
+import { Shield, Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 
-const Login = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -15,34 +16,40 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login - in real app, this would connect to authentication service
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', email);
-    navigate('/dashboard');
+    
+    // Admin credentials check (in real app, this would be server-side)
+    if (email === 'admin@cropguard.ai' && password === 'admin123') {
+      localStorage.setItem('isAdminLoggedIn', 'true');
+      localStorage.setItem('adminEmail', email);
+      toast.success('Admin login successful!');
+      navigate('/admin/dashboard');
+    } else {
+      toast.error('Invalid admin credentials');
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-red-200">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-green-600 p-3 rounded-full">
-              <Leaf className="h-8 w-8 text-white" />
+            <div className="bg-red-600 p-3 rounded-full">
+              <Shield className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-green-800">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your CropGuard AI account</CardDescription>
+          <CardTitle className="text-2xl font-bold text-red-800">Admin Access</CardTitle>
+          <CardDescription>Sign in to CropGuard AI Admin Panel</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Admin Email</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="admin@cropguard.ai"
                 required
               />
             </div>
@@ -54,7 +61,7 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder="Enter admin password"
                   required
                 />
                 <button
@@ -66,26 +73,16 @@ const Login = () => {
                 </button>
               </div>
             </div>
-            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-              Sign In
+            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700">
+              Access Admin Panel
             </Button>
           </form>
-          <div className="mt-6 text-center space-y-2">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-green-600 hover:text-green-700 font-medium">
-                Sign up
-              </Link>
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-xs text-yellow-800">
+              <strong>Demo Credentials:</strong><br />
+              Email: admin@cropguard.ai<br />
+              Password: admin123
             </p>
-            <div className="border-t border-gray-200 pt-4">
-              <Link 
-                to="/admin/login" 
-                className="inline-flex items-center text-sm text-red-600 hover:text-red-700 font-medium"
-              >
-                <Shield className="h-3 w-3 mr-1" />
-                Admin Access
-              </Link>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -93,4 +90,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;
